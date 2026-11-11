@@ -572,10 +572,41 @@ public function salesHistroy(Request $request, SalesHistoryDataTable $dataTable)
         $report_title = 'Sales History Report <br> <span class="text-sm">' . $range_text . '</span>';
  
         // DataTable er query() ei filter apply kore, tai table/excel/print shob same data dey
-        $data  = $dataTable->query($request, new Sales())->get();
-        $total = $data->sum(SalesHistoryDataTable::AMOUNT_COLUMN);
- 
-        $pdf = Pdf::loadView('admin.reports.sales_history.print', compact('title', 'informations', 'report_title', 'data', 'total'));
+        
+        
+        $data = $dataTable->query($request, new Sales())->get();
+
+        $total = $data->sum('total_amount');
+
+        $total_discount = $data->sum('discount');
+
+        $net_total = $data->sum(function ($row) {
+            return (float) $row->total_amount - (float) $row->discount;
+        });
+
+        $total_paid = $data->sum('total_paid');
+
+        $pdf = Pdf::loadView(
+            'admin.reports.sales_history.print',
+            compact(
+                'title',
+                'informations',
+                'report_title',
+                'data',
+                'total',
+                'total_discount',
+                'net_total',
+                'total_paid'
+            )
+        );
+
+        $pdf->setPaper('A4', 'landscape');
+
+        return $pdf->stream(
+            'sales_history_' . date('d_m_Y_h_i_s') . '.pdf'
+        );
+
+
         $pdf->setPaper('A4', 'landscape');
         return $pdf->stream('sales_history_' . date('d_m_Y_h_i_s') . '.pdf');
     }
