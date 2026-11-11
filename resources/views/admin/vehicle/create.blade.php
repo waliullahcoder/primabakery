@@ -1,0 +1,35 @@
+@extends('layouts.admin.create_app')
+
+@section('content')
+    <div class="row g-3">
+        <div class="col-lg-4 col-sm-6">
+            <label for="company_id" class="form-label"><b>Company Name</b></label>
+            <select name="company_id" id="company_id" class="select form-select" data-placeholder="Select Company" required>
+                <option value=""></option>
+                @foreach ($companies as $company)
+                    <option value="{{ $company->id }}"
+                        {{ old('company_id') && old('company_id') == $company->id ? 'selected' : '' }}>{{ $company->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <label for="type" class="form-label"><b>Type</b></label>
+            <div class="custom-select">
+                <select class="form-control custom-select__element" name="type" id="type" required>
+                    <option value="Frozen Pickup" {{ old('type') && old('type') == 'Frozen Pickup' ? 'selected' : '' }}>
+                        Frozen Pickup</option>
+                    <option value="Non Frozen Pickup"
+                        {{ old('type') && old('type') == 'Non Frozen Pickup' ? 'selected' : '' }}>Non Frozen Pickup</option>
+                    <option value="Cavard Van" {{ old('type') && old('type') == 'Cavard Van' ? 'selected' : '' }}>Cavard Van
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <label for="registration_no" class="form-label"><b>Registration No.</b></label>
+            <input type="text" class="form-control" id="registration_no" name="registration_no" required
+                value="{{ old('registration_no') }}" placeholder="Registration No.">
+        </div>
+    </div>
+@endsection
